@@ -3,3 +3,5 @@ Clinic_Management_System.docx.pdf
 
 # ignore foler of reactjs in front end folder
 front-end/node_modules/
+
+front-end/src/Firebase/firebase.config.ts
