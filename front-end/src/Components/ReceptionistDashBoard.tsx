@@ -1,9 +1,9 @@
 import React from 'react'
 
-const ReceptionistDashBoad = () => {
+const ReceptionistDashBoard = () => {
   return (
     <div>ReceptionistDashBoad</div>
   )
 }
 
-export default ReceptionistDashBoad
+export default ReceptionistDashBoard

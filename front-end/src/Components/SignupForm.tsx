@@ -1,14 +1,18 @@
-import React from 'react'
-import { useState } from "react"
+import React, { useState } from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../Firebase/firebase';
+import { useNavigate } from 'react-router-dom';
+
 interface SignupFormData {
+    [key: string]: string;
     name: string;
     phone: string;
     role: string;
     email: string;
     password: string;
-    repeatePassword: string;
-
+    repeatPassword: string; 
 }
+
 const SignupForm = () => {
     const [formData, setFormData] = useState<SignupFormData>({
         name: '',
@@ -16,85 +20,149 @@ const SignupForm = () => {
         role: '',
         email: '',
         password: '',
-        repeatePassword: ''
+        repeatPassword: ''
     });
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const roles = ["Doctor", "Receptionalist"];
-    // Handle change in Input in the elements in the form 
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({ ...prevState, [name]: value }));
     }
-    //  Excecutes when the form is submitted.
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (formData.password != formData.repeatePassword) {
-            setError('Password do not match');
+        setError('');
+
+        if (formData.password !== formData.repeatPassword) {
+            setError('Passwords do not match');
             return;
         }
         if (!formData.role) {
             setError('Please select a role');
             return;
         }
-        console.log(formData);
-        setError('');
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            
+            // TODO: Save additional user data (name, phone, role) to Firestore or Realtime Database
+            navigate('/login'); // Redirect to login page after successful registration
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('An unknown error occurred');
+            }
+        }
     }
 
     return (
         <div className='w-full max-w-sm mx-auto p-8 border-gray-300 rounded-lg shadow-md'>
             <h2 className='text-2xl font-bold mb-6 text-center'>Sign Up</h2>
             <form onSubmit={handleSubmit}>
-                <div className='mb-4'>
-                    <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='name'>Name</label>
-                    <input 
-                    type='text' 
-                    id='name' 
-                    name='name' 
-                    value={formData.name} 
-                    onChange={handleChange} 
-                    required className='shadow appearence-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-ring' />
-
-                </div>
-                <div className='mb-4'>
-                    <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="password">Password</label>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                        Name
+                    </label>
                     <input
-                        type='password'
-                        id='password'
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
+                        Phone
+                    </label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
+                        Role
+                    </label>
+                    <select
+                        id="role"
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        required
+                    >
+                        <option value="">Select a role</option>
+                        {roles.map(role => (
+                            <option key={role} value={role}>
+                                {role}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                        Password
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
                         value={formData.password}
                         onChange={handleChange}
                         required
-                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring'
-                        />
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
                 </div>
-                <div className='mb-6'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='repeat-passwod'></label>
-                        <input
-                            type='password'
-                            id='repeat-password'
-                            value={formData.repeatePassword}
-                            onChange={handleChange}
-                            required
-                            className='shadow appearance-none border rounded w-full py-2 text-gray-700 leading-tight focus:outline-none focus:ring'
-                        />
-                        {error && <p className='text-red-500 mb-4'>{error}</p>}
-                        {
-                        
-                        }
-
-                        <button className='bg-blue-500 hover:bg-blue-700'>Create your account</button>
+                <div className="mb-6">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="repeatPassword">
+                        Repeat Password
+                    </label>
+                    <input
+                        type="password"
+                        id="repeatPassword"
+                        name="repeatPassword"
+                        value={formData.repeatPassword}
+                        onChange={handleChange}
+                        required
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
                 </div>
-
-
-
-
-
-
-
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+                <button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                >
+                    Create Your Account
+                </button>
             </form>
-
         </div>
     )
 }
 
-export default SignupForm
+export default SignupForm;
