@@ -6,4 +6,4 @@ const DoctorsDashboard = () => {
   )
 }
 
-export default DoctorsDashboard
+export default DoctorsDashboard;

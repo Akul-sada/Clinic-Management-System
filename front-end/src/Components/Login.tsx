@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword,getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import auth from '../Firebase/firebase';
 
 
@@ -9,12 +9,28 @@ const Login = () => {
   const [password,setPassword] = useState("");
   const [error,setError] = useState("");
   
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>)=>{
+  const handleLogin = (e: React.MouseEvent<HTMLInputElement, MouseEvent>)=>{
     e.preventDefault();
     signInWithEmailAndPassword(auth, email,password)
     .then((userCredential)=>{
       console.log(userCredential)
     });
+
+  }
+  const auth = getAuth();
+  createUserWithEmailAndPassword(auth,email,password)
+  .then((userCredential)=>{
+    const user = userCredential.user;
+    
+
+  })
+  .catch((error)=>{
+    console.log(error);
+  })
+
+  const handleSignup =(e: React.MouseEvent<HTMLButtonElement,MouseEvent>)=>{
+
+
 
   }
   return (
@@ -31,7 +47,11 @@ const Login = () => {
               <label htmlFor="password">Password</label>
               <input type="text" className='shadow appearance-none border rounded w-full py-2 text-gray-700 leading-tight focus:outline-none p-2' placeholder='******' />
             </div>
+            <div className="actions">
+            <input  type="submit" value="Login" onClick={handleLogin} />
+            </div>
           </form>
+          <button className='cursor-pointer'>Don't have an account</button>
         </div>
 
       </div>
