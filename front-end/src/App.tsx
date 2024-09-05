@@ -9,9 +9,7 @@ import ReceptionistDashBoad from './Components/ReceptionistDashBoard';
 import ReceptionistDashBoard from './Components/ReceptionistDashBoard';
 
 
-const ProtectedLayout = () => (
-  <div><Outlet /></div>
-);
+
 
 function App() {
   return (

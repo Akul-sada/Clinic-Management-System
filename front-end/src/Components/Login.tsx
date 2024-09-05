@@ -14,28 +14,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const userCredentials = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredentials.user;
+      console.log(userCredentials);
 
-      // Fetch user data from Firestore
-      const userDocRef = doc(db, 'users', user.uid);
-      
-      const userDocSnap = await getDoc(userDocRef);
-      
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        console.log('User data:', userData);
 
-        // Redirect based on user role
-        if (userData.role === 'Doctor') {
-          navigate('/doctor');
-        } else if (userData.role === 'Receptionist') { // Note the spelling correction
-          navigate('/reception');
-        } else {
-          setError('Invalid user role');
-        }
-      } else {
-        setError('User data not found');
-      }
+      
     } catch (error) {
       console.error('Error during login:', error);
       if (error instanceof Error) {

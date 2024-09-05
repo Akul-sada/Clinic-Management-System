@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 
 
 const Navbar = dynamic(() => import('./Navbar') as Promise<any>, { ssr: false });
-
 const DoctorsDashboard = () => {
  
   return (
