@@ -2,31 +2,34 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../Firebase/firebase';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredentials.user;
+
+      // Fetch user data from Firestore
+      const userDocRef = doc(db, 'users', user.uid);
       
-      // Fetch user role from Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const role = userData.role;
-        
-        // Redirect based on role
-        if (role === 'Doctor') {
+      const userDocSnap = await getDoc(userDocRef);
+      
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        console.log('User data:', userData);
+
+        // Redirect based on user role
+        if (userData.role === 'Doctor') {
           navigate('/doctor');
-        } else if (role === 'Receptionalist') {
-          navigate('/recieption');
+        } else if (userData.role === 'Receptionist') { // Note the spelling correction
+          navigate('/reception');
         } else {
           setError('Invalid user role');
         }
@@ -34,13 +37,14 @@ const Login = () => {
         setError('User data not found');
       }
     } catch (error) {
+      console.error('Error during login:', error);
       if (error instanceof Error) {
         setError(error.message);
       } else {
         setError('An unknown error occurred');
       }
     }
-  }
+  };
 
   return (
     <div className='flex items-center justify-center h-screen'>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom';
 import Login from './Components/Login';
 
 import DoctorsDashboard from './Components/DoctorsDashboard';
@@ -9,23 +9,21 @@ import ReceptionistDashBoad from './Components/ReceptionistDashBoard';
 import ReceptionistDashBoard from './Components/ReceptionistDashBoard';
 
 
-
+const ProtectedLayout = () => (
+  <div><Outlet /></div>
+);
 
 function App() {
   return (
-    <>
     <Router>
       <Routes>
         <Route path='/' element={<Login/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<SignupForm/>}/>
-        <Route path='/recieption' element={<ReceptionistDashBoard/>}/>
-        
+        <Route path='/reception' element={<ReceptionistDashBoard/>}/>
         <Route path='/doctor' element={<DoctorsDashboard/>}/>
       </Routes>
     </Router>
-    
-    </>
   );
 }
 

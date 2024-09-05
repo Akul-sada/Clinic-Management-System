@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../Firebase/firebase';
 import { useNavigate } from 'react-router-dom';
+import { setDoc, doc } from 'firebase/firestore';
+import { db } from '../Firebase/firebase';
 
 interface SignupFormData {
     [key: string]: string;
@@ -47,8 +49,16 @@ const SignupForm = () => {
 
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-            
-            // TODO: Save additional user data (name, phone, role) to Firestore or Realtime Database
+            const user = userCredential.user;
+
+            // Save user data to Firestore
+            await setDoc(doc(db, 'users', user.uid), {
+                name: formData.name,
+                phone: formData.phone,
+                role: formData.role,
+                email: formData.email
+            });
+
             navigate('/login'); // Redirect to login page after successful registration
         } catch (error) {
             if (error instanceof Error) {

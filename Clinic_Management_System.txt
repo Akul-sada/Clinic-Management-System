@@ -1,0 +1,10 @@
+Clinic Management System
+
+Project Stack: React-Typescript, Firebase
+
+Domain: Health Care
+
+This software helps doctor and his receiptionalist communicate with each other.
+
+
+
