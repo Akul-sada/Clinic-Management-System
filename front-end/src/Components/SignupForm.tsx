@@ -29,6 +29,7 @@ const SignupForm = () => {
 
     const roles = ["Doctor", "Receptionalist"];
 
+// Handles input and select element changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({ ...prevState, [name]: value }));
