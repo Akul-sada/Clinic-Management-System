@@ -7,11 +7,12 @@ import DoctorsDashboard from './Components/DoctorsDashboard';
 import SignupForm from './Components/SignupForm';
 import ReceptionistDashBoad from './Components/ReceptionistDashBoard';
 import ReceptionistDashBoard from './Components/ReceptionistDashBoard';
-
-
+import { useFirebase } from './Context/firebaseContext';
 
 
 function App() {
+  const firebase = useFirebase();
+  console.log(firebase);
   return (
     <Router>
       <Routes>

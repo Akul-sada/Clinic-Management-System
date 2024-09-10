@@ -3,12 +3,15 @@ import { auth } from '../Firebase/firebase';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 import { signOut } from 'firebase/auth';
+import { useFirebase } from '../Context/firebaseContext';
 
-const Navbar = async () => {
+const Navbar =  () => {
+    
     const navigate = useNavigate();
+    const firebase=useFirebase();
 
     const handleLogout =async ()=>{
-        try{
+      try{
             await signOut(auth);
             navigate('/login');
             

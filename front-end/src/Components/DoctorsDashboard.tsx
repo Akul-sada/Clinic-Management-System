@@ -1,11 +1,10 @@
 import React,{Suspense} from 'react';
-import Navbar from './Navbar';
+// import Navbar from './Navbar';
 import dynamic from 'next/dynamic';
-
-
-const Navbar = dynamic(() => import('./Navbar') as Promise<any>, { ssr: false });
+import Navbar from './Navbar';
+// const Navbar = dynamic(() => import('./Navbar') as Promise<any>, { ssr: false });
 const DoctorsDashboard = () => {
- 
+
   return (
     <>
      <Suspense fallback ={<div>loading...</div>}>

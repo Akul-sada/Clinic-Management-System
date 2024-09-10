@@ -1,7 +1,8 @@
 import React, { Suspense } from 'react'
 import dynamic from 'next/dynamic'
+import Navbar from './Navbar'
 
-const Navbar = dynamic(() => import('./Navbar') as Promise<any>, { ssr: false });
+// const Navbar = dynamic(() => import('./Navbar') as Promise<any>, { ssr: false });
 
 const ReceptionistDashBoard = () => {
   return (

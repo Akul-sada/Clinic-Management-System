@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../Firebase/firebase';
 import { useNavigate } from 'react-router-dom';
 import { setDoc, doc } from 'firebase/firestore';
@@ -15,6 +15,7 @@ interface SignupFormData {
     repeatPassword: string; 
 }
 
+
 const SignupForm = () => {
     const [formData, setFormData] = useState<SignupFormData>({
         name: '',
@@ -25,6 +26,7 @@ const SignupForm = () => {
         repeatPassword: ''
     });
     const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
     const roles = ["Doctor", "Receptionalist"];
@@ -52,15 +54,37 @@ const SignupForm = () => {
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
             const user = userCredential.user;
 
-            // Save user data to Firestore
+// Save the data to firestore.
+            
             await setDoc(doc(db, 'users', user.uid), {
                 name: formData.name,
                 phone: formData.phone,
                 role: formData.role,
                 email: formData.email
             });
+            // Send email verification
 
-            navigate('/login'); // Redirect to login page after successful registration
+            await sendEmailVerification(user);
+            
+            
+            // Dislay message to user to check their email for verification.
+
+            setMessage('Please check your email for verification.');
+           
+            setTimeout(()=>{
+                navigate('/login');
+            },5000);
+            // Clear the form data
+            setFormData({
+                name: '',
+                phone: '',
+                role: '',
+                email:'',
+                password:'',
+                repeatPassword:''
+            })
+            
+           
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -68,11 +92,14 @@ const SignupForm = () => {
                 setError('An unknown error occurred');
             }
         }
+        
     }
+   
 
     return (
         <div className='w-full max-w-sm mx-auto p-8 border-gray-300 rounded-lg shadow-md'>
             <h2 className='text-2xl font-bold mb-6 text-center'>Sign Up</h2>
+            {message && <p className='text-green-500 mb-4 text-center font-medium'>{message}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -169,7 +196,7 @@ const SignupForm = () => {
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
                 >
-                    Create Your Account
+                    Submit
                 </button>
             </form>
         </div>

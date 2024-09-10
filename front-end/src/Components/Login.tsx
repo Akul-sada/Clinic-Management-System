@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../Firebase/firebase';
 import { useNavigate, Link } from 'react-router-dom';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,9 +14,22 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const userCredentials = await signInWithEmailAndPassword(auth, email, password);
-      console.log(userCredentials);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const userDoc = await getDoc(doc(db,'users',user.uid));
+      const userData = userDoc.data();
+      
+      if(user.emailVerified){
+        const userDataLowercase = userData?.role.toLowerCase();
 
+        if(userDataLowercase === 'reception'){
+          navigate('/reception');
+        }else if(userDataLowercase === 'doctor'){
+          navigate('/doctor');
+        }
+
+      }
+      
 
       
     } catch (error) {
