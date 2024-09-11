@@ -39,6 +39,11 @@ app.get('/patient/:id',async(req:Request,res:Response)=>{
     const patient = await db.collection('patients').doc(req.params.id).get();
     res.json(patient);
 });
+// get patient by token number
+app.get('/patient/token/:tokenNumber',async(req:Request,res:Response)=>{
+    const patient = await db.collection('patients').where('tokenNumber','==',req.params.tokenNumber).get();
+    res.json(patient);
+});
 // update patients data
 app.put('/patient/:id',async(req:Request,res:Response)=>{
     const patient = await db.collection('patients').doc(req.params.id).update(req.body);
@@ -51,7 +56,6 @@ app.delete('/patient/:id',async(req:Request,res:Response)=>{
 });
 // Add new patient
 app.post('/patient',async(req:Request,res:Response)=>{
- 
    const patientsData = {
     id:req.body.id,
     phoneNumber:req.body.phoneNumber,
