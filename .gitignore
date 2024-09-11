@@ -10,3 +10,6 @@ Clinic_Management_System.txt
 
 # NODE_JS
 backend/node_modules
+
+
+backend/src/credential.json
