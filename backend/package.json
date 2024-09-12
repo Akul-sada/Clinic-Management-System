@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@firebase/firestore": "^4.7.1",
+    "backend": "file:",
     "dotenv": "^16.4.5",
     "express": "^4.20.0",
     "firebase": "^10.13.1",
