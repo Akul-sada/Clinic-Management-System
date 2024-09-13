@@ -1,9 +1,11 @@
 import express, { Request, Response,NextFunction } from 'express';
 import * as dotenv from 'dotenv';
 import path from 'path';
-import admin, { firestore } from 'firebase-admin';
+import admin, { firestore, messaging } from 'firebase-admin';
 import serviceAccount from './credential.json';
 import { db } from './firebase';
+import AppError from './utility/appError';
+import globalerrorHandler from './controller/errorController';
 
 const app = express();
 // reference https://console.firebase.google.com/u/0/project/clinic-management-system-ddce8/settings/serviceaccounts/adminsdk    serviceAccount = require("path/to/serviceAccountKey.json");
@@ -15,7 +17,44 @@ app.use(express.json());
 
 const port = process.env.PORT || 4000;
 
+// funtion to eliminate the try catch block
+const catchAsync = (fn:Function) =>{
+    return (req:Request,res:Response,next:NextFunction) =>{
+    fn(req,res,next).catch(next);
+}
+}
+
+// Handling all the errors of entair application in a single middleware
+interface CustomError extends Error{
+    status?:string;
+    statusCode?:number;
+    message: string;  // Remove the optional '?' from message
+}
+
+app.all('*',(req:Request,res:Response,next:NextFunction)=>{
+    
+    next(new AppError(`Can't find ${req.originalUrl} on this server, Please recheck your route`,404));
+});
+
+declare global{
+    namespace Express{
+        interface Error{
+            statusCode?:number ;
+            status?:string;
+            message?:string;
+
+
+        }
+    }
+}
+app.use(globalerrorHandler);
+
+
+
+
+
 /*
+error 
 Property 'requestTime' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.ts(2339)
 To solve this error, we need to define a custom interface that extends the Request interface and includes the requestTime property.
 app.use((req:Request,res:Response,next:NextFunction)=>{
